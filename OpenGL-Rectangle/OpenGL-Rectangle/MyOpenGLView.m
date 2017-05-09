@@ -120,14 +120,17 @@
     // 不使用VBO,不使用顶点索引数组(使用GL_TRIANGLE常规绘制，6个顶点)
     //[self nomalRenderRectangle];
     
-    // 不使用VBO，不使用顶点索引数组(使用GL_TRIANGLE绘制，4个顶点)
+    // 不使用VBO，不使用顶点索引数组(使用GL_TRIANGLE_STRIP绘制，4个顶点)
     //[self stripRenderRectangle];
+    
+    // 不使用VBO，不适用顶点索引数组(使用GL_TRIANGLE_FAN绘制，4个顶点)
+     [self fanRenderRectangle];
     
     // 不使用VBO，使用顶点索引数组来绘制
     //[self useElementRenderRectangle];
     
     // 使用VBO + 顶点索引数组来绘制
-    [self useVBOandElementRenderRectangle];
+    //[self useVBOandElementRenderRectangle];
 }
 
 - (void)nomalRenderRectangle
@@ -164,16 +167,12 @@
 - (void)stripRenderRectangle
 {
     const GLfloat vertices[] = {
-        
-      
+       -1,-1, 0, // 左下，黑色 0
         1,-1, 0, // 右下，红色 1
-         -1,-1, 0, // 左下，黑色 0
        -1, 1, 0, // 左上，蓝色 2
         1, 1, 0, // 右上，绿色 3
     };
     const GLfloat colors[] = {
-        
-        
         1,0,0,1, // 右下，红色
         0,0,0,1, // 左下，黑色
         0,0,1,1, // 左上，蓝色
@@ -186,6 +185,31 @@
     glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 0, colors);
     glEnableVertexAttribArray(colorSlot);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    
+    [context presentRenderbuffer:GL_RENDERBUFFER];
+}
+
+- (void)fanRenderRectangle
+{
+    const GLfloat vertices[] = {
+        1,-1, 0, // 右下，红色 1
+       -1,-1, 0, // 左下，黑色 0
+       -1, 1, 0, // 左上，蓝色 2
+        1, 1, 0, // 右上，绿色 3
+    };
+    const GLfloat colors[] = {
+        1,0,0,1, // 右下，红色
+        0,0,0,1, // 左下，黑色
+        0,0,1,1, // 左上，蓝色
+        0,1,0,1, // 右上，绿色
+    };
+    
+    glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glEnableVertexAttribArray(positionSlot);
+    
+    glVertexAttribPointer(colorSlot, 4, GL_FLOAT, GL_FALSE, 0, colors);
+    glEnableVertexAttribArray(colorSlot);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     
     [context presentRenderbuffer:GL_RENDERBUFFER];
 }
